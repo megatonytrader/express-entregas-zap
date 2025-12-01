@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Gift } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { BottomNav } from "@/components/BottomNav";
 import { useState, useEffect } from "react";
@@ -146,6 +146,27 @@ const Index = () => {
             <a href="#menu">Ver Cardápio</a>
           </Button>
         </div>
+      </section>
+
+      {/* Promotional Banner */}
+      <section className="container mx-auto px-4 py-8">
+        <Card className="bg-gradient-success text-secondary-foreground p-8 flex flex-col md:flex-row items-center justify-between gap-6 animate-fade-in">
+          <div className="flex items-center gap-6">
+            <Gift className="h-16 w-16 flex-shrink-0" />
+            <div>
+              <h2 className="text-2xl font-bold mb-1">Oferta Especial!</h2>
+              <p className="opacity-90">Use o cupom <strong>SUPER10</strong> e ganhe 10% de desconto.</p>
+            </div>
+          </div>
+          <Button 
+            variant="secondary" 
+            size="lg" 
+            className="bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90 flex-shrink-0"
+            onClick={() => toast({ title: "Cupom copiado!", description: "Use SUPER10 no checkout." })}
+          >
+            Aproveitar Oferta
+          </Button>
+        </Card>
       </section>
 
       {/* Categories */}
