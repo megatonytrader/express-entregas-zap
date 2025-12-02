@@ -130,16 +130,25 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="bg-gradient-primary text-primary-foreground py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
-            O Melhor Churrasco da Cidade
-          </h1>
-          <p className="text-lg md:text-xl mb-8 opacity-90 animate-slide-up">
-            Carnes nobres, preparadas na brasa. Peça agora!
-          </p>
-          <Button asChild size="lg" variant="secondary" className="shadow-medium">
-            <a href="#menu">Ver Cardápio</a>
-          </Button>
+        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
+              O Melhor Churrasco da Cidade
+            </h1>
+            <p className="text-lg md:text-xl mb-8 opacity-90 animate-slide-up">
+              Carnes nobres, preparadas na brasa. Peça agora!
+            </p>
+            <Button asChild size="lg" variant="secondary" className="shadow-medium">
+              <a href="#menu">Ver Cardápio</a>
+            </Button>
+          </div>
+          <div className="flex justify-center">
+            <img 
+              src="/placeholder.svg"
+              alt="Espetinho de Carne" 
+              className="rounded-lg shadow-medium max-w-sm w-full h-auto object-cover animate-scale-in"
+            />
+          </div>
         </div>
       </section>
 
