@@ -24,7 +24,7 @@ export function MobileMenu({ logoUrl, companyTitle }: MobileMenuProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="outline" size="icon">
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
