@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, Gift } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { BottomNav } from "@/components/BottomNav";
 import { useState, useEffect } from "react";
@@ -150,27 +150,6 @@ const Index = () => {
             />
           </div>
         </div>
-      </section>
-
-      {/* Promotional Banner */}
-      <section className="container mx-auto px-4 py-8">
-        <Card className="bg-gradient-success text-secondary-foreground p-8 flex flex-col md:flex-row items-center justify-between gap-6 animate-fade-in">
-          <div className="flex items-center gap-6">
-            <Gift className="h-16 w-16 flex-shrink-0" />
-            <div>
-              <h2 className="text-2xl font-bold mb-1">Picanha em Dobro!</h2>
-              <p className="opacity-90">Peça uma picanha e ganhe a segunda com 50% OFF. Use o cupom <strong>PICANHA50</strong></p>
-            </div>
-          </div>
-          <Button 
-            variant="secondary" 
-            size="lg" 
-            className="bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90 flex-shrink-0"
-            onClick={() => toast({ title: "Cupom copiado!", description: "Use PICANHA50 no checkout." })}
-          >
-            Aproveitar Oferta
-          </Button>
-        </Card>
       </section>
 
       {/* Categories */}
