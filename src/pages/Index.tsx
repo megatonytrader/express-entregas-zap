@@ -117,7 +117,7 @@ const Index = () => {
                   className="h-20 md:h-12 w-auto object-contain"
                 />
               )}
-              <span className="text-xl font-bold">{companyTitle}</span>
+              <span className="text-xl font-bold hidden md:inline">{companyTitle}</span>
             </div>
           </div>
         </div>
