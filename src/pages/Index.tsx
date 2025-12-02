@@ -114,7 +114,7 @@ const Index = () => {
                 <img 
                   src={logoUrl} 
                   alt="Logo" 
-                  className="h-20 md:h-12 w-auto object-contain"
+                  className="h-24 md:h-12 w-auto object-contain"
                 />
               )}
               <span className="text-xl font-bold hidden md:inline">{companyTitle}</span>
