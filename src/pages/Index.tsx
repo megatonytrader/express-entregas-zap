@@ -108,13 +108,13 @@ const Index = () => {
       {/* Header */}
       <header className="bg-background border-b border-border sticky top-0 z-10 shadow-soft">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 mx-auto">
+          <div className="flex items-center justify-center md:justify-start">
+            <div className="flex items-center gap-3">
               {logoUrl && (
                 <img 
                   src={logoUrl} 
                   alt="Logo" 
-                  className="h-24 w-auto object-contain"
+                  className="h-12 w-auto object-contain"
                 />
               )}
               <span className="text-xl font-bold">{companyTitle}</span>
