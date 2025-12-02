@@ -243,7 +243,7 @@ const AdminProducts = () => {
                   <Label htmlFor="name">Nome do Produto *</Label>
                   <Input 
                     id="name" 
-                    placeholder="Ex: X-Burger Especial"
+                    placeholder="Ex: Picanha Nobre"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     required
@@ -285,10 +285,10 @@ const AdminProducts = () => {
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Lanches">Lanches</SelectItem>
+                        <SelectItem value="Carnes">Carnes</SelectItem>
+                        <SelectItem value="Acompanhamentos">Acompanhamentos</SelectItem>
                         <SelectItem value="Bebidas">Bebidas</SelectItem>
                         <SelectItem value="Sobremesas">Sobremesas</SelectItem>
-                        <SelectItem value="Porções">Porções</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

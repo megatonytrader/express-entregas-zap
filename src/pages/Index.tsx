@@ -7,7 +7,6 @@ import { BottomNav } from "@/components/BottomNav";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import bebidaIcon from "@/assets/bebida-icon.png";
 
 interface Product {
   id: string;
@@ -27,10 +26,10 @@ const Index = () => {
   const [logoUrl, setLogoUrl] = useState<string>("");
 
   const categories = [
-    { id: "Lanches", name: "Hamburguer", icon: "🍔" },
-    { id: "Bebidas", name: "Bebidas", icon: "🥤", imageIcon: bebidaIcon },
-    { id: "Porções", name: "Porções", icon: "🍟" },
-    { id: "Combos", name: "Combos", icon: "🎁" },
+    { id: "Carnes", name: "Carnes", icon: "🥩" },
+    { id: "Acompanhamentos", name: "Acompanhamentos", icon: "🥗" },
+    { id: "Bebidas", name: "Bebidas", icon: "🍺" },
+    { id: "Sobremesas", name: "Sobremesas", icon: "🍮" },
   ];
 
   useEffect(() => {
@@ -95,7 +94,7 @@ const Index = () => {
                   className="h-24 w-auto object-contain"
                 />
               )}
-              <span className="text-xl font-bold">DeliveryApp</span>
+              <span className="text-xl font-bold">Churrascaria do Sabor</span>
             </div>
           </div>
         </div>
@@ -120,11 +119,7 @@ const Index = () => {
                   onClick={() => setSelectedCategory(category.id)}
                   className="whitespace-nowrap"
                 >
-                  {category.imageIcon ? (
-                    <img src={category.imageIcon} alt={category.name} className="w-5 h-5 mr-1 object-contain" />
-                  ) : (
-                    <span className="mr-1">{category.icon}</span>
-                  )}
+                  <span className="mr-1">{category.icon}</span>
                   {category.name}
                 </Button>
               ))}
@@ -137,10 +132,10 @@ const Index = () => {
       <section className="bg-gradient-primary text-primary-foreground py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
-            Delivery Rápido e Saboroso
+            O Melhor Churrasco da Cidade
           </h1>
           <p className="text-lg md:text-xl mb-8 opacity-90 animate-slide-up">
-            Peça agora e receba em até 30 minutos
+            Carnes nobres, preparadas na brasa. Peça agora!
           </p>
           <Button asChild size="lg" variant="secondary" className="shadow-medium">
             <a href="#menu">Ver Cardápio</a>
@@ -154,15 +149,15 @@ const Index = () => {
           <div className="flex items-center gap-6">
             <Gift className="h-16 w-16 flex-shrink-0" />
             <div>
-              <h2 className="text-2xl font-bold mb-1">Oferta Especial!</h2>
-              <p className="opacity-90">Use o cupom <strong>SUPER10</strong> e ganhe 10% de desconto.</p>
+              <h2 className="text-2xl font-bold mb-1">Picanha em Dobro!</h2>
+              <p className="opacity-90">Peça uma picanha e ganhe a segunda com 50% OFF. Use o cupom <strong>PICANHA50</strong></p>
             </div>
           </div>
           <Button 
             variant="secondary" 
             size="lg" 
             className="bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90 flex-shrink-0"
-            onClick={() => toast({ title: "Cupom copiado!", description: "Use SUPER10 no checkout." })}
+            onClick={() => toast({ title: "Cupom copiado!", description: "Use PICANHA50 no checkout." })}
           >
             Aproveitar Oferta
           </Button>
@@ -181,11 +176,7 @@ const Index = () => {
                 selectedCategory === category.id ? "ring-2 ring-primary bg-primary/5" : ""
               }`}
             >
-              {category.imageIcon ? (
-                <img src={category.imageIcon} alt={category.name} className="w-16 h-16 mx-auto mb-2 object-contain" />
-              ) : (
-                <div className="text-4xl mb-2">{category.icon}</div>
-              )}
+              <div className="text-4xl mb-2">{category.icon}</div>
               <p className="font-semibold">{category.name}</p>
             </Card>
           ))}
@@ -263,7 +254,7 @@ const Index = () => {
       <footer className="bg-background border-t border-border mt-16 pb-20">
         <div className="container mx-auto px-4 py-8 text-center">
           <p className="text-muted-foreground">
-            © 2024 DeliveryApp. Todos os direitos reservados.
+            © 2024 Churrascaria do Sabor. Todos os direitos reservados.
           </p>
         </div>
       </footer>
