@@ -17,6 +17,7 @@ import AdminCategories from "./pages/AdminCategories";
 import AdminProducts from "./pages/AdminProducts";
 import AdminLogo from "./pages/AdminLogo";
 import AdminWhatsApp from "./pages/AdminWhatsApp";
+import AdminCompanySettings from "./pages/AdminCompanySettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -80,6 +81,14 @@ const App = () => (
                 element={
                   <AdminProtectedRoute>
                     <AdminWhatsApp />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/company-settings"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminCompanySettings />
                   </AdminProtectedRoute>
                 }
               />

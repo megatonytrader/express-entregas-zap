@@ -24,6 +24,8 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState<string>("");
+  const [companyTitle, setCompanyTitle] = useState<string>("Churrascaria do Sabor");
+  const [companySlogan, setCompanySlogan] = useState<string>("O Melhor Churrasco da Cidade");
 
   const categories = [
     { id: "Carnes", name: "Carnes", icon: "🥩" },
@@ -35,6 +37,7 @@ const Index = () => {
   useEffect(() => {
     loadProducts();
     loadLogo();
+    loadCompanySettings();
   }, []);
 
   const loadLogo = async () => {
@@ -51,6 +54,26 @@ const Index = () => {
       }
     } catch (error) {
       console.error("Erro ao carregar logo:", error);
+    }
+  };
+
+  const loadCompanySettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("settings")
+        .select("key, value")
+        .in("key", ["company_title", "company_slogan"]);
+
+      if (error) throw error;
+
+      if (data) {
+        const titleSetting = data.find(s => s.key === 'company_title');
+        const sloganSetting = data.find(s => s.key === 'company_slogan');
+        if (titleSetting?.value) setCompanyTitle(titleSetting.value);
+        if (sloganSetting?.value) setCompanySlogan(sloganSetting.value);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar configurações da empresa:", error);
     }
   };
 
@@ -94,7 +117,7 @@ const Index = () => {
                   className="h-24 w-auto object-contain"
                 />
               )}
-              <span className="text-xl font-bold">Churrascaria do Sabor</span>
+              <span className="text-xl font-bold">{companyTitle}</span>
             </div>
           </div>
         </div>
@@ -133,7 +156,7 @@ const Index = () => {
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
           <div className="text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
-              O Melhor Churrasco da Cidade
+              {companySlogan}
             </h1>
             <p className="text-lg md:text-xl mb-8 opacity-90 animate-slide-up">
               Carnes nobres, preparadas na brasa. Peça agora!
