@@ -7,6 +7,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { MobileMenu } from "@/components/MobileMenu";
 
 interface Product {
   id: string;
@@ -107,18 +108,29 @@ const Index = () => {
     <div className="min-h-screen bg-muted/30">
       {/* Header */}
       <header className="bg-background border-b border-border sticky top-0 z-10 shadow-soft">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-center md:justify-start">
-            <div className="flex items-center gap-3">
-              {logoUrl && (
-                <img 
-                  src={logoUrl} 
-                  alt="Logo" 
-                  className="h-24 md:h-12 w-auto object-contain"
-                />
-              )}
-              <span className="text-xl font-bold hidden md:inline">{companyTitle}</span>
+        <div className="container mx-auto px-4 py-2">
+          <div className="flex items-center justify-between">
+            {/* Mobile Menu - shown only on mobile */}
+            <div className="md:hidden">
+              <MobileMenu logoUrl={logoUrl} companyTitle={companyTitle} />
             </div>
+
+            {/* Logo and Title - centered on mobile, start on desktop */}
+            <div className="flex items-center justify-center flex-1 md:flex-none md:justify-start">
+              <div className="flex items-center gap-3">
+                {logoUrl && (
+                  <img 
+                    src={logoUrl} 
+                    alt="Logo" 
+                    className="h-16 md:h-12 w-auto object-contain"
+                  />
+                )}
+                <span className="text-xl font-bold hidden md:inline">{companyTitle}</span>
+              </div>
+            </div>
+
+            {/* Spacer for mobile to center the logo */}
+            <div className="w-10 md:hidden" />
           </div>
         </div>
         
