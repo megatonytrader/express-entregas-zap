@@ -138,7 +138,7 @@ const Index = () => {
         </div>
         
         {/* Fixed Categories Menu */}
-        <div className="border-t border-border bg-background/95 backdrop-blur-sm">
+        <div className="border-t border-border bg-primary/10 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-3">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide">
               <Button
