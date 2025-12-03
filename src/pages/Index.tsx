@@ -30,7 +30,7 @@ const Index = () => {
   const [companySlogan, setCompanySlogan] = useState<string>("O Melhor Churrasco da Cidade");
 
   const categories = [
-    { id: "Carnes", name: "Carnes", icon: "🥩" },
+    { id: "Espetinho", name: "Espetinho", icon: "🍢" },
     { id: "Porções", name: "Porções", icon: "🍟" },
     { id: "Bebidas", name: "Bebidas", icon: "🍺" },
     { id: "Fatiado", name: "Fatiado", icon: "🔪" },
