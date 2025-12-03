@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MobileMenu } from "@/components/MobileMenu";
 import bebidaIcon from "@/assets/bebida-icon.png";
+import espetinhoIcon from "@/assets/espetinho-icon.png";
 
 interface Product {
   id: string;
@@ -155,7 +156,7 @@ const Index = () => {
                   onClick={() => setSelectedCategory(category.id)}
                   className="whitespace-nowrap"
                 >
-                  {category.id !== 'Bebidas' && <span className="mr-1">{category.icon}</span>}
+                  {category.id !== 'Bebidas' && category.id !== 'Espetinho' && <span className="mr-1">{category.icon}</span>}
                   {category.name}
                 </Button>
               ))}
@@ -196,6 +197,8 @@ const Index = () => {
               <div className="text-4xl mb-2 flex justify-center items-center h-10">
                 {category.id === 'Bebidas' ? (
                   <img src={bebidaIcon} alt="Bebidas" className="h-full w-auto object-contain" />
+                ) : category.id === 'Espetinho' ? (
+                  <img src={espetinhoIcon} alt="Espetinho" className="h-full w-auto object-contain" />
                 ) : (
                   <span>{category.icon}</span>
                 )}
