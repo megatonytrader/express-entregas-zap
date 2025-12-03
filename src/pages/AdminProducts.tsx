@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -25,8 +26,15 @@ interface Product {
   image_url: string | null;
 }
 
+interface AddOn {
+  id: string;
+  name: string;
+  price: number;
+}
+
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [addOns, setAddOns] = useState<AddOn[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -35,6 +43,7 @@ const AdminProducts = () => {
     price: "",
     category: "",
   });
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -42,6 +51,7 @@ const AdminProducts = () => {
 
   useEffect(() => {
     loadProducts();
+    loadAddOns();
   }, []);
 
   const loadProducts = async () => {
@@ -66,6 +76,35 @@ const AdminProducts = () => {
     }
   };
 
+  const loadAddOns = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("add_ons")
+        .select("*")
+        .order("name");
+
+      if (error) throw error;
+      setAddOns(data || []);
+    } catch (error) {
+      console.error("Error loading add-ons:", error);
+    }
+  };
+
+  const loadProductAddOns = async (productId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("product_add_ons")
+        .select("add_on_id")
+        .eq("product_id", productId);
+
+      if (error) throw error;
+      setSelectedAddOns(data?.map(item => item.add_on_id) || []);
+    } catch (error) {
+      console.error("Error loading product add-ons:", error);
+      setSelectedAddOns([]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -81,6 +120,7 @@ const AdminProducts = () => {
     try {
       setSubmitting(true);
       let imageUrl = null;
+      let productId = editingId;
 
       // Upload image if provided
       if (imageFile) {
@@ -122,13 +162,32 @@ const AdminProducts = () => {
 
         if (error) throw error;
 
+        // Update product add-ons
+        await supabase
+          .from("product_add_ons")
+          .delete()
+          .eq("product_id", editingId);
+
+        if (selectedAddOns.length > 0) {
+          const addOnRelations = selectedAddOns.map(addOnId => ({
+            product_id: editingId,
+            add_on_id: addOnId,
+          }));
+
+          const { error: addOnsError } = await supabase
+            .from("product_add_ons")
+            .insert(addOnRelations);
+
+          if (addOnsError) throw addOnsError;
+        }
+
         toast({
           title: "Produto atualizado!",
           description: "O produto foi atualizado com sucesso.",
         });
       } else {
         // Insert new product
-        const { error } = await supabase
+        const { data: newProduct, error } = await supabase
           .from("products")
           .insert([
             {
@@ -138,9 +197,26 @@ const AdminProducts = () => {
               category: formData.category,
               image_url: imageUrl,
             },
-          ]);
+          ])
+          .select()
+          .single();
 
         if (error) throw error;
+        productId = newProduct.id;
+
+        // Insert product add-ons
+        if (selectedAddOns.length > 0) {
+          const addOnRelations = selectedAddOns.map(addOnId => ({
+            product_id: productId,
+            add_on_id: addOnId,
+          }));
+
+          const { error: addOnsError } = await supabase
+            .from("product_add_ons")
+            .insert(addOnRelations);
+
+          if (addOnsError) throw addOnsError;
+        }
 
         toast({
           title: "Produto cadastrado!",
@@ -150,6 +226,7 @@ const AdminProducts = () => {
 
       // Reset form
       setFormData({ name: "", description: "", price: "", category: "" });
+      setSelectedAddOns([]);
       setImageFile(null);
       setShowForm(false);
       setEditingId(null);
@@ -166,7 +243,7 @@ const AdminProducts = () => {
     }
   };
 
-  const handleEdit = (product: Product) => {
+  const handleEdit = async (product: Product) => {
     setFormData({
       name: product.name,
       description: product.description || "",
@@ -174,11 +251,18 @@ const AdminProducts = () => {
       category: product.category,
     });
     setEditingId(product.id);
+    await loadProductAddOns(product.id);
     setShowForm(true);
   };
 
   const handleDelete = async (id: string) => {
     try {
+      // Delete product add-ons first
+      await supabase
+        .from("product_add_ons")
+        .delete()
+        .eq("product_id", id);
+
       const { error } = await supabase
         .from("products")
         .delete()
@@ -199,6 +283,14 @@ const AdminProducts = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const toggleAddOn = (addOnId: string) => {
+    setSelectedAddOns(prev => 
+      prev.includes(addOnId) 
+        ? prev.filter(id => id !== addOnId)
+        : [...prev, addOnId]
+    );
   };
 
   return (
@@ -229,6 +321,7 @@ const AdminProducts = () => {
               setShowForm(!showForm);
               setEditingId(null);
               setFormData({ name: "", description: "", price: "", category: "" });
+              setSelectedAddOns([]);
             }}>
               <Plus className="h-4 w-4 mr-2" />
               Novo Produto
@@ -304,6 +397,35 @@ const AdminProducts = () => {
                   />
                 </div>
 
+                {addOns.length > 0 && (
+                  <div className="space-y-3">
+                    <Label>Adicionais Disponíveis</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {addOns.map((addOn) => (
+                        <div
+                          key={addOn.id}
+                          className="flex items-center space-x-2 p-3 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                        >
+                          <Checkbox
+                            id={`addon-${addOn.id}`}
+                            checked={selectedAddOns.includes(addOn.id)}
+                            onCheckedChange={() => toggleAddOn(addOn.id)}
+                          />
+                          <label
+                            htmlFor={`addon-${addOn.id}`}
+                            className="flex-1 text-sm cursor-pointer"
+                          >
+                            <span className="font-medium">{addOn.name}</span>
+                            <span className="text-muted-foreground ml-2">
+                              R$ {addOn.price.toFixed(2)}
+                            </span>
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex gap-2">
                   <Button type="submit" className="flex-1" disabled={submitting}>
                     {submitting ? "Salvando..." : (editingId ? "Atualizar Produto" : "Salvar Produto")}
@@ -315,6 +437,7 @@ const AdminProducts = () => {
                       setShowForm(false);
                       setEditingId(null);
                       setFormData({ name: "", description: "", price: "", category: "" });
+                      setSelectedAddOns([]);
                     }}
                     disabled={submitting}
                   >
