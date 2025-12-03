@@ -31,7 +31,7 @@ const Index = () => {
 
   const categories = [
     { id: "Carnes", name: "Carnes", icon: "🥩" },
-    { id: "Acompanhamentos", name: "Acompanhamentos", icon: "🥗" },
+    { id: "Porções", name: "Porções", icon: "🍟" },
     { id: "Bebidas", name: "Bebidas", icon: "🍺" },
     { id: "Fatiado", name: "Fatiado", icon: "🔪" },
   ];
