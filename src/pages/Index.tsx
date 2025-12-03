@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MobileMenu } from "@/components/MobileMenu";
+import bebidaIcon from "@/assets/bebida-icon.png";
 
 interface Product {
   id: string;
@@ -154,7 +155,7 @@ const Index = () => {
                   onClick={() => setSelectedCategory(category.id)}
                   className="whitespace-nowrap"
                 >
-                  <span className="mr-1">{category.icon}</span>
+                  {category.id !== 'Bebidas' && <span className="mr-1">{category.icon}</span>}
                   {category.name}
                 </Button>
               ))}
@@ -192,7 +193,13 @@ const Index = () => {
                 selectedCategory === category.id ? "ring-2 ring-primary bg-primary/5" : ""
               }`}
             >
-              <div className="text-4xl mb-2">{category.icon}</div>
+              <div className="text-4xl mb-2 flex justify-center items-center h-10">
+                {category.id === 'Bebidas' ? (
+                  <img src={bebidaIcon} alt="Bebidas" className="h-full w-auto object-contain" />
+                ) : (
+                  <span>{category.icon}</span>
+                )}
+              </div>
               <p className="font-semibold">{category.name}</p>
             </Card>
           ))}
