@@ -14,9 +14,10 @@ interface Category {
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState<Category[]>([
-    { id: "1", name: "Lanches" },
-    { id: "2", name: "Bebidas" },
-    { id: "3", name: "Sobremesas" },
+    { id: "1", name: "Carnes" },
+    { id: "2", name: "Acompanhamentos" },
+    { id: "3", name: "Bebidas" },
+    { id: "4", name: "Espetinho" },
   ]);
   const [newCategory, setNewCategory] = useState("");
   const { toast } = useToast();

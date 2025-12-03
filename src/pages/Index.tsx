@@ -33,7 +33,7 @@ const Index = () => {
     { id: "Carnes", name: "Carnes", icon: "🥩" },
     { id: "Acompanhamentos", name: "Acompanhamentos", icon: "🥗" },
     { id: "Bebidas", name: "Bebidas", icon: "🍺" },
-    { id: "Sobremesas", name: "Sobremesas", icon: "🍮" },
+    { id: "Espetinho", name: "Espetinho", icon: "🍢" },
   ];
 
   useEffect(() => {

@@ -288,7 +288,7 @@ const AdminProducts = () => {
                         <SelectItem value="Carnes">Carnes</SelectItem>
                         <SelectItem value="Acompanhamentos">Acompanhamentos</SelectItem>
                         <SelectItem value="Bebidas">Bebidas</SelectItem>
-                        <SelectItem value="Sobremesas">Sobremesas</SelectItem>
+                        <SelectItem value="Espetinho">Espetinho</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
