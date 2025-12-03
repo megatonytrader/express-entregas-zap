@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MobileMenu } from "@/components/MobileMenu";
 import bebidaIcon from "@/assets/bebida-icon.png";
 import espetinhoIcon from "@/assets/espetinho-icon.png";
+import fatiadoIcon from "@/assets/fatiado-icon.png";
 
 interface Product {
   id: string;
@@ -156,7 +157,7 @@ const Index = () => {
                   onClick={() => setSelectedCategory(category.id)}
                   className="whitespace-nowrap"
                 >
-                  {category.id !== 'Bebidas' && category.id !== 'Espetinho' && <span className="mr-1">{category.icon}</span>}
+                  {category.id !== 'Bebidas' && category.id !== 'Espetinho' && category.id !== 'Fatiado' && <span className="mr-1">{category.icon}</span>}
                   {category.name}
                 </Button>
               ))}
@@ -199,6 +200,8 @@ const Index = () => {
                   <img src={bebidaIcon} alt="Bebidas" className="h-full w-auto object-contain" />
                 ) : category.id === 'Espetinho' ? (
                   <img src={espetinhoIcon} alt="Espetinho" className="h-full w-auto object-contain" />
+                ) : category.id === 'Fatiado' ? (
+                  <img src={fatiadoIcon} alt="Fatiado" className="h-full w-auto object-contain" />
                 ) : (
                   <span>{category.icon}</span>
                 )}
