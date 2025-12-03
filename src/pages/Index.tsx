@@ -165,8 +165,8 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="bg-gradient-primary text-primary-foreground py-16">
-        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
-          <div className="text-center md:text-left">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
               {companySlogan}
             </h1>
@@ -176,13 +176,6 @@ const Index = () => {
             <Button asChild size="lg" variant="secondary" className="shadow-medium">
               <a href="#menu">Ver Cardápio</a>
             </Button>
-          </div>
-          <div className="flex justify-center">
-            <img 
-              src="/placeholder.svg"
-              alt="Espetinho de Carne" 
-              className="rounded-lg shadow-medium max-w-sm w-full h-auto object-cover animate-scale-in"
-            />
           </div>
         </div>
       </section>
