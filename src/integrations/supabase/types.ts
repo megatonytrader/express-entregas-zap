@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      add_ons: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          price?: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           created_at: string
@@ -23,6 +44,7 @@ export type Database = {
           product_name: string
           product_price: number
           quantity: number
+          selected_add_ons: Json | null
           updated_at: string
           user_id: string
         }
@@ -34,6 +56,7 @@ export type Database = {
           product_name: string
           product_price: number
           quantity?: number
+          selected_add_ons?: Json | null
           updated_at?: string
           user_id: string
         }
@@ -45,6 +68,7 @@ export type Database = {
           product_name?: string
           product_price?: number
           quantity?: number
+          selected_add_ons?: Json | null
           updated_at?: string
           user_id?: string
         }
@@ -60,6 +84,7 @@ export type Database = {
           product_name: string
           product_price: number
           quantity: number
+          selected_add_ons: Json | null
         }
         Insert: {
           created_at?: string
@@ -70,6 +95,7 @@ export type Database = {
           product_name: string
           product_price: number
           quantity: number
+          selected_add_ons?: Json | null
         }
         Update: {
           created_at?: string
@@ -80,6 +106,7 @@ export type Database = {
           product_name?: string
           product_price?: number
           quantity?: number
+          selected_add_ons?: Json | null
         }
         Relationships: [
           {
@@ -135,6 +162,36 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      product_add_ons: {
+        Row: {
+          add_on_id: string
+          product_id: string
+        }
+        Insert: {
+          add_on_id: string
+          product_id: string
+        }
+        Update: {
+          add_on_id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_add_ons_add_on_id_fkey"
+            columns: ["add_on_id"]
+            isOneToOne: false
+            referencedRelation: "add_ons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_add_ons_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
