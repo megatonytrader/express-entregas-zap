@@ -17,7 +17,7 @@ const AdminCategories = () => {
     { id: "1", name: "Carnes" },
     { id: "2", name: "Acompanhamentos" },
     { id: "3", name: "Bebidas" },
-    { id: "4", name: "Espetinho" },
+    { id: "4", name: "Fatiado" },
   ]);
   const [newCategory, setNewCategory] = useState("");
   const { toast } = useToast();
