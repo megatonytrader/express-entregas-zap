@@ -143,8 +143,8 @@ const AdminProducts = () => {
       setNewAddOnPrice('');
       setIsNewAddOnCharged(false);
       
-      // Reload add-ons and select the new one
-      await loadAddOns();
+      // Update state locally for immediate feedback, instead of re-fetching
+      setAddOns(prev => [...prev, newAddOn].sort((a, b) => a.name.localeCompare(b.name)));
       setSelectedAddOns(prev => [...prev, newAddOn.id]);
 
     } catch (error) {
