@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock, ShoppingBag, Mail, UserPlus } from "lucide-react";
+import { Lock, ShoppingBag, Mail, UserPlus, CheckCircle, Copy } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -13,6 +13,10 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [newUserId, setNewUserId] = useState("");
+  const [newUserEmail, setNewUserEmail] = useState("");
+
   const { login, signUp } = useAdminAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -48,15 +52,9 @@ const AdminLogin = () => {
     const { success, error, user } = await signUp(email, password);
 
     if (success && user) {
-      toast({
-        title: "Cadastro realizado com sucesso!",
-        description: "Agora, você precisa atribuir a permissão de admin a este usuário no painel do Supabase.",
-        duration: 8000,
-      });
-      // Reset form and switch back to login
-      setEmail("");
-      setPassword("");
-      setIsSignUp(false);
+      setNewUserId(user.id);
+      setNewUserEmail(user.email || "");
+      setSignUpSuccess(true);
     } else {
       console.error("Sign up error:", error);
       toast({
@@ -75,6 +73,65 @@ const AdminLogin = () => {
     setPassword("");
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copiado!",
+      description: "O ID do usuário foi copiado para a área de transferência.",
+    });
+  };
+
+  const resetToLogin = () => {
+    setSignUpSuccess(false);
+    setIsSignUp(false);
+    setEmail("");
+    setPassword("");
+    setNewUserId("");
+    setNewUserEmail("");
+  };
+
+  if (signUpSuccess) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
+        <Card className="w-full max-w-lg p-8 animate-scale-in">
+          <div className="flex flex-col items-center text-center mb-6">
+            <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
+            <h1 className="text-2xl font-bold mb-2">Cadastro Realizado!</h1>
+            <p className="text-muted-foreground">
+              O usuário <span className="font-semibold text-primary">{newUserEmail}</span> foi criado. Agora, o passo final é dar a ele permissão de administrador.
+            </p>
+          </div>
+
+          <div className="text-left space-y-4 text-sm">
+            <p className="font-semibold">Siga estes passos no seu painel do Supabase:</p>
+            <ol className="list-decimal list-inside space-y-2 bg-muted/50 p-4 rounded-lg">
+              <li>Vá para <strong>Database</strong> &gt; <strong>Tables</strong> e selecione a tabela <strong>user_roles</strong>.</li>
+              <li>Clique em <strong>+ Insert row</strong>.</li>
+              <li>
+                <p>No campo <strong>user_id</strong>, cole o ID abaixo:</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Input readOnly value={newUserId} className="bg-background font-mono text-xs" />
+                  <Button variant="outline" size="icon" onClick={() => copyToClipboard(newUserId)}>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </li>
+              <li>No campo <strong>role</strong>, digite exatamente <strong>admin</strong>.</li>
+              <li>Clique em <strong>Save</strong>.</li>
+            </ol>
+            <p className="text-muted-foreground text-xs">
+              Este passo é necessário por segurança, para garantir que apenas usuários autorizados possam se tornar administradores.
+            </p>
+          </div>
+
+          <Button onClick={resetToLogin} className="w-full mt-6">
+            Entendi, voltar para o Login
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8 animate-scale-in">
@@ -83,10 +140,10 @@ const AdminLogin = () => {
             {isSignUp ? <UserPlus className="h-8 w-8 text-primary" /> : <ShoppingBag className="h-8 w-8 text-primary" />}
           </div>
           <h1 className="text-2xl font-bold mb-2">
-            {isSignUp ? "Criar Conta" : "Painel Administrativo"}
+            {isSignUp ? "Criar Conta de Admin" : "Painel Administrativo"}
           </h1>
           <p className="text-muted-foreground text-center">
-            {isSignUp ? "Preencha os dados para criar um novo usuário." : "Acesse com suas credenciais de administrador"}
+            {isSignUp ? "Crie um novo usuário para gerenciar a loja." : "Acesse com suas credenciais de administrador"}
           </p>
         </div>
 
@@ -113,7 +170,7 @@ const AdminLogin = () => {
               <Input
                 id="password"
                 type="password"
-                placeholder="Digite a senha"
+                placeholder="Crie uma senha forte"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10"
