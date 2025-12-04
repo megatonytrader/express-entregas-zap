@@ -11,6 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { ShoppingCart, Plus, Trash2, Pencil } from "lucide-react";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { useState, useEffect } from "react";
@@ -48,6 +54,11 @@ const AdminProducts = () => {
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // State for new add-on form
+  const [newAddOnName, setNewAddOnName] = useState("");
+  const [newAddOnPrice, setNewAddOnPrice] = useState("");
+  const [isNewAddOnCharged, setIsNewAddOnCharged] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -102,6 +113,43 @@ const AdminProducts = () => {
     } catch (error) {
       console.error("Error loading product add-ons:", error);
       setSelectedAddOns([]);
+    }
+  };
+
+  const handleAddNewAddOn = async () => {
+    if (!newAddOnName.trim()) {
+      toast({ title: "Nome do adicional é obrigatório", variant: "destructive" });
+      return;
+    }
+
+    const price = isNewAddOnCharged ? parseFloat(newAddOnPrice) || 0 : 0;
+
+    if (isNewAddOnCharged && price <= 0) {
+      toast({ title: "Se a cobrança está ativa, o preço deve ser maior que zero.", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const { data: newAddOn, error } = await supabase
+        .from("add_ons")
+        .insert({ name: newAddOnName.trim(), price: price })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({ title: "Adicional criado com sucesso!" });
+      setNewAddOnName('');
+      setNewAddOnPrice('');
+      setIsNewAddOnCharged(false);
+      
+      // Reload add-ons and select the new one
+      await loadAddOns();
+      setSelectedAddOns(prev => [...prev, newAddOn.id]);
+
+    } catch (error) {
+      console.error("Error creating add-on:", error);
+      toast({ title: "Erro ao criar adicional", description: "Verifique se já não existe um com o mesmo nome.", variant: "destructive" });
     }
   };
 
@@ -397,10 +445,54 @@ const AdminProducts = () => {
                   />
                 </div>
 
-                {addOns.length > 0 && (
-                  <div className="space-y-3">
-                    <Label>Adicionais Disponíveis</Label>
-                    <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-3">
+                  <Label>Opções / Adicionais</Label>
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="outline" size="sm" className="w-full flex items-center gap-2">
+                        <Plus className="h-4 w-4" />
+                        Criar Nova Opção
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pt-3">
+                      <div className="p-4 bg-muted/50 rounded-lg border space-y-3">
+                        <h4 className="font-semibold text-sm text-muted-foreground">Nova Opção</h4>
+                        <Input 
+                          placeholder="Nome (Ex: Bacon extra)" 
+                          value={newAddOnName} 
+                          onChange={(e) => setNewAddOnName(e.target.value)} 
+                        />
+                        <div className="flex items-center space-x-2">
+                          <Switch 
+                            id="is-charged" 
+                            checked={isNewAddOnCharged} 
+                            onCheckedChange={setIsNewAddOnCharged} 
+                          />
+                          <Label htmlFor="is-charged">Cobrar por esta opção? (Sim/Não)</Label>
+                        </div>
+                        {isNewAddOnCharged && (
+                          <Input 
+                            type="number" 
+                            placeholder="Preço (Ex: 3.50)" 
+                            step="0.01"
+                            value={newAddOnPrice} 
+                            onChange={(e) => setNewAddOnPrice(e.target.value)} 
+                          />
+                        )}
+                        <Button 
+                          type="button" 
+                          size="sm"
+                          onClick={handleAddNewAddOn}
+                          className="w-full"
+                        >
+                          Adicionar e Selecionar
+                        </Button>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  {addOns.length > 0 && (
+                    <div className="grid grid-cols-2 gap-3 pt-2">
                       {addOns.map((addOn) => (
                         <div
                           key={addOn.id}
@@ -423,8 +515,8 @@ const AdminProducts = () => {
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 <div className="flex gap-2">
                   <Button type="submit" className="flex-1" disabled={submitting}>
