@@ -160,7 +160,7 @@ const AdminProducts = () => {
       } else {
         toast({
           title: "Erro ao criar adicional",
-          description: "Não foi possível salvar a nova opção.",
+          description: `Não foi possível salvar a nova opção. Erro: ${error.message || 'Erro desconhecido.'}`,
           variant: "destructive",
         });
       }
