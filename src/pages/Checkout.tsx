@@ -9,11 +9,13 @@ import { useToast } from "@/hooks/use-toast";
 import { BottomNav } from "@/components/BottomNav";
 import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
+import { useSettings } from "@/hooks/useSettings";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { items, total, clearCart } = useCart();
+  const { settings } = useSettings();
   const [whatsappNumber, setWhatsappNumber] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -164,7 +166,7 @@ ${fullAddress}
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
               <ShoppingBag className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">DeliveryApp</span>
+              <span className="text-xl font-bold">{settings.companyTitle}</span>
             </Link>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MobileMenu } from "@/components/MobileMenu";
+import { useSettings } from "@/hooks/useSettings";
 import bebidaIcon from "@/assets/bebida-icon.png";
 import espetinhoIcon from "@/assets/espetinho-icon.png";
 import fatiadoIcon from "@/assets/fatiado-icon.png";
@@ -27,9 +28,8 @@ const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string>("");
-  const [companyTitle, setCompanyTitle] = useState<string>("Churrascaria do Sabor");
-  const [companySlogan, setCompanySlogan] = useState<string>("O Melhor Churrasco da Cidade");
+  const { settings } = useSettings();
+  const { companyTitle, companySlogan, logoUrl } = settings;
 
   const categories = [
     { id: "Espetinho", name: "Espetinho", icon: "🍢" },
@@ -40,46 +40,7 @@ const Index = () => {
 
   useEffect(() => {
     loadProducts();
-    loadLogo();
-    loadCompanySettings();
   }, []);
-
-  const loadLogo = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("settings")
-        .select("value")
-        .eq("key", "logo_url")
-        .maybeSingle();
-
-      if (error) throw error;
-      if (data?.value) {
-        setLogoUrl(data.value);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar logo:", error);
-    }
-  };
-
-  const loadCompanySettings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("settings")
-        .select("key, value")
-        .in("key", ["company_title", "company_slogan"]);
-
-      if (error) throw error;
-
-      if (data) {
-        const titleSetting = data.find(s => s.key === 'company_title');
-        const sloganSetting = data.find(s => s.key === 'company_slogan');
-        if (titleSetting?.value) setCompanyTitle(titleSetting.value);
-        if (sloganSetting?.value) setCompanySlogan(sloganSetting.value);
-      }
-    } catch (error) {
-      console.error("Erro ao carregar configurações da empresa:", error);
-    }
-  };
 
   const loadProducts = async () => {
     try {
@@ -283,7 +244,7 @@ const Index = () => {
       <footer className="bg-background border-t border-border mt-16 pb-20">
         <div className="container mx-auto px-4 py-8 text-center">
           <p className="text-muted-foreground">
-            © 2024 Churrascaria do Sabor. Todos os direitos reservados.
+            © 2024 {companyTitle}. Todos os direitos reservados.
           </p>
         </div>
       </footer>

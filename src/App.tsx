@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/hooks/useCart";
+import { SettingsProvider, useSettings } from "@/hooks/useSettings";
 import Index from "./pages/Index";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
@@ -21,6 +22,39 @@ import { supabase } from "@/integrations/supabase/client";
 import AdminFavicon from "./pages/AdminFavicon";
 
 const queryClient = new QueryClient();
+
+const AppRoutes = () => {
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    if (settings.companyTitle) {
+      document.title = settings.companyTitle;
+    }
+  }, [settings.companyTitle]);
+
+  return (
+    <CartProvider>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/categories" element={<AdminCategories />} />
+        <Route path="/admin/products" element={<AdminProducts />} />
+        <Route path="/admin/logo" element={<AdminLogo />} />
+        <Route path="/admin/favicon" element={<AdminFavicon />} />
+        <Route path="/admin/whatsapp" element={<AdminWhatsApp />} />
+        <Route
+          path="/admin/company-settings"
+          element={<AdminCompanySettings />}
+        />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </CartProvider>
+  );
+};
 
 const App = () => {
   useEffect(() => {
@@ -59,27 +93,9 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <CartProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/orders" element={<AdminOrders />} />
-              <Route path="/admin/categories" element={<AdminCategories />} />
-              <Route path="/admin/products" element={<AdminProducts />} />
-              <Route path="/admin/logo" element={<AdminLogo />} />
-              <Route path="/admin/favicon" element={<AdminFavicon />} />
-              <Route path="/admin/whatsapp" element={<AdminWhatsApp />} />
-              <Route
-                path="/admin/company-settings"
-                element={<AdminCompanySettings />}
-              />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </CartProvider>
+          <SettingsProvider>
+            <AppRoutes />
+          </SettingsProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
