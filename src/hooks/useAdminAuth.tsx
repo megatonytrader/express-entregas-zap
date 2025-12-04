@@ -73,11 +73,28 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
     });
-    setIsLoading(false);
 
     if (error) {
+      setIsLoading(false);
       return { success: false, error };
     }
+
+    if (data.user) {
+      // Create a profile for the new user, as it's required by the database schema.
+      const { error: profileError } = await supabase.from("profiles").insert({
+        user_id: data.user.id,
+        nome: email.split('@')[0] || 'Novo Usuário',
+      });
+
+      if (profileError) {
+        console.error("Error creating profile:", profileError);
+        setIsLoading(false);
+        // Return profile error to the UI
+        return { success: false, error: profileError };
+      }
+    }
+
+    setIsLoading(false);
     
     // The user is created but does not have an admin role yet.
     // This must be done manually in the Supabase dashboard.
