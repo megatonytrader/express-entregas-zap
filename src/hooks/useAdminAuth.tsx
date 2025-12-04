@@ -5,6 +5,7 @@ import { User } from "@supabase/supabase-js";
 interface AdminAuthContextType {
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: any }>;
+  signUp: (email: string, password: string) => Promise<{ success: boolean; error?: any; user?: User | null }>;
   logout: () => Promise<void>;
   isLoading: boolean;
   user: User | null;
@@ -32,7 +33,8 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         } else {
           setIsAdmin(false);
           setUser(null);
-          await supabase.auth.signOut();
+          // Don't sign out here, as a newly signed up user won't have a role yet.
+          // await supabase.auth.signOut(); 
         }
       } else {
         setIsAdmin(false);
@@ -65,6 +67,23 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     return { success: true };
   };
 
+  const signUp = async (email: string, password: string) => {
+    setIsLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    setIsLoading(false);
+
+    if (error) {
+      return { success: false, error };
+    }
+    
+    // The user is created but does not have an admin role yet.
+    // This must be done manually in the Supabase dashboard.
+    return { success: true, user: data.user };
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -72,7 +91,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AdminAuthContext.Provider value={{ isAdmin, login, logout, isLoading, user }}>
+    <AdminAuthContext.Provider value={{ isAdmin, login, signUp, logout, isLoading, user }}>
       {children}
     </AdminAuthContext.Provider>
   );
