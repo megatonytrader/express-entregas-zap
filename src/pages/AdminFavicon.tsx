@@ -154,7 +154,7 @@ const AdminFavicon = () => {
                   onChange={handleFileChange}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Recomendamos uma imagem .ico, .png ou .svg quadrada.
+                  Recomendamos uma imagem quadrada (.ico, .png, .svg) com pelo menos 32x32 pixels. Tamanhos maiores como 192x192 ou 512x512 pixels são ideais para garantir a qualidade em todos os dispositivos.
                 </p>
               </div>
 
