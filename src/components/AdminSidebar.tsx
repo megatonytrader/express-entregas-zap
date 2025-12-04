@@ -1,4 +1,4 @@
-import { Home, Package, Settings, LogOut, LayoutDashboard, Image, MessageCircle, FolderTree, ShoppingCart, Building } from "lucide-react";
+import { Home, Package, Settings, LogOut, LayoutDashboard, Image, MessageCircle, FolderTree, ShoppingCart, Building, Star } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -36,6 +36,11 @@ export function AdminSidebar() {
       path: "/admin/logo",
       icon: Image,
       label: "Logo",
+    },
+    {
+      path: "/admin/favicon",
+      icon: Star,
+      label: "Favicon",
     },
     {
       path: "/admin/whatsapp",
