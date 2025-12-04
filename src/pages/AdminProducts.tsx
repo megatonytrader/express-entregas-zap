@@ -126,12 +126,12 @@ const AdminProducts = () => {
     }
     const nameExists = addOns.some((addOn) => addOn.name.toLowerCase() === trimmedName.toLowerCase());
     if (nameExists) {
-      toast({ title: "Erro: Adicional já existe", variant: "destructive" });
+      toast({ title: "Erro: Adicional já existe", description: "Já existe uma opção com este nome.", variant: "destructive" });
       return;
     }
     const price = isNewAddOnCharged ? parseFloat(newAddOnPrice) || 0 : 0;
     if (isNewAddOnCharged && price <= 0) {
-      toast({ title: "Preço inválido", variant: "destructive" });
+      toast({ title: "Preço inválido", description: "O preço deve ser maior que zero se a cobrança estiver ativa.", variant: "destructive" });
       return;
     }
     try {
@@ -140,16 +140,30 @@ const AdminProducts = () => {
         .insert({ name: trimmedName, price: price })
         .select()
         .single();
+
       if (error) throw error;
+
       toast({ title: "Adicional criado com sucesso!" });
       setNewAddOnName("");
       setNewAddOnPrice("");
       setIsNewAddOnCharged(false);
       setAddOns((prev) => [...prev, newAddOn].sort((a, b) => a.name.localeCompare(b.name)));
       setSelectedAddOns((prev) => [...prev, newAddOn.id]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating add-on:", error);
-      toast({ title: "Erro ao criar adicional", variant: "destructive" });
+      if (error.code === '23505') { // Supabase code for unique violation
+        toast({
+          title: "Erro: Adicional já existe",
+          description: "Já existe uma opção com este nome. Por favor, escolha outro.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Erro ao criar adicional",
+          description: "Não foi possível salvar a nova opção.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
