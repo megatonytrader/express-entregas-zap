@@ -47,6 +47,11 @@ export function AdminSidebar() {
       icon: Building,
       label: "Empresa",
     },
+    {
+      path: "/admin/account-settings",
+      icon: Settings,
+      label: "Conta",
+    },
   ];
 
   const handleLogout = async () => {
