@@ -117,39 +117,63 @@ const AdminProducts = () => {
   };
 
   const handleAddNewAddOn = async () => {
-    if (!newAddOnName.trim()) {
+    const trimmedName = newAddOnName.trim();
+    if (!trimmedName) {
       toast({ title: "Nome do adicional é obrigatório", variant: "destructive" });
+      return;
+    }
+
+    // Check for duplicates (case-insensitive) before inserting
+    const nameExists = addOns.some(
+      (addOn) => addOn.name.toLowerCase() === trimmedName.toLowerCase()
+    );
+    if (nameExists) {
+      toast({
+        title: "Erro: Adicional já existe",
+        description: "Já existe uma opção com este nome. Por favor, escolha outro nome.",
+        variant: "destructive",
+      });
       return;
     }
 
     const price = isNewAddOnCharged ? parseFloat(newAddOnPrice) || 0 : 0;
 
     if (isNewAddOnCharged && price <= 0) {
-      toast({ title: "Se a cobrança está ativa, o preço deve ser maior que zero.", variant: "destructive" });
+      toast({
+        title: "Preço inválido",
+        description: "Se a cobrança está ativa, o preço deve ser maior que zero.",
+        variant: "destructive",
+      });
       return;
     }
 
     try {
       const { data: newAddOn, error } = await supabase
         .from("add_ons")
-        .insert({ name: newAddOnName.trim(), price: price })
+        .insert({ name: trimmedName, price: price })
         .select()
         .single();
 
       if (error) throw error;
 
       toast({ title: "Adicional criado com sucesso!" });
-      setNewAddOnName('');
-      setNewAddOnPrice('');
+      setNewAddOnName("");
+      setNewAddOnPrice("");
       setIsNewAddOnCharged(false);
-      
-      // Update state locally for immediate feedback, instead of re-fetching
-      setAddOns(prev => [...prev, newAddOn].sort((a, b) => a.name.localeCompare(b.name)));
-      setSelectedAddOns(prev => [...prev, newAddOn.id]);
 
+      // Update state locally for immediate feedback
+      setAddOns((prev) =>
+        [...prev, newAddOn].sort((a, b) => a.name.localeCompare(b.name))
+      );
+      setSelectedAddOns((prev) => [...prev, newAddOn.id]);
     } catch (error) {
       console.error("Error creating add-on:", error);
-      toast({ title: "Erro ao criar adicional", description: "Verifique se já não existe um com o mesmo nome.", variant: "destructive" });
+      toast({
+        title: "Erro ao criar adicional",
+        description:
+          "Não foi possível salvar a nova opção. O servidor retornou um erro.",
+        variant: "destructive",
+      });
     }
   };
 
