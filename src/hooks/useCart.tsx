@@ -1,6 +1,12 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
 
+export interface AddOn {
+  id: string;
+  name: string;
+  price: number;
+}
+
 export interface CartItem {
   id: string;
   productId: string;
@@ -8,6 +14,7 @@ export interface CartItem {
   productPrice: number;
   productImage?: string;
   quantity: number;
+  selectedAddOns?: AddOn[];
 }
 
 interface CartContextType {
@@ -15,8 +22,8 @@ interface CartContextType {
   itemCount: number;
   total: number;
   addItem: (item: Omit<CartItem, "id" | "quantity"> & { quantity?: number }) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeItem: (cartItemId: string) => void;
+  updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
 }
 
@@ -54,10 +61,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     item: Omit<CartItem, "id" | "quantity"> & { quantity?: number }
   ) => {
     const quantity = item.quantity || 1;
-    const existingItem = items.find((i) => i.productId === item.productId);
+    const selectedAddOns = item.selectedAddOns || [];
+
+    // Find if an identical item (same product and same add-ons) already exists
+    const existingItem = items.find(i => {
+      if (i.productId !== item.productId) return false;
+      const currentAddOnIds = (i.selectedAddOns || []).map(a => a.id).sort().join(',');
+      const newAddOnIds = selectedAddOns.map(a => a.id).sort().join(',');
+      return currentAddOnIds === newAddOnIds;
+    });
 
     if (existingItem) {
-      updateQuantity(item.productId, existingItem.quantity + quantity);
+      updateQuantity(existingItem.id, existingItem.quantity + quantity);
+      toast({
+        title: "Quantidade atualizada",
+        description: `${item.productName} teve sua quantidade aumentada no carrinho.`,
+      });
       return;
     }
 
@@ -68,6 +87,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       productPrice: item.productPrice,
       productImage: item.productImage,
       quantity,
+      selectedAddOns,
     };
 
     const newItems = [...items, newItem];
@@ -80,8 +100,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeItem = (productId: string) => {
-    const newItems = items.filter((item) => item.productId !== productId);
+  const removeItem = (cartItemId: string) => {
+    const newItems = items.filter((item) => item.id !== cartItemId);
     setItems(newItems);
     saveToLocalStorage(newItems);
     
@@ -91,14 +111,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (cartItemId: string, quantity: number) => {
     if (quantity < 1) {
-      removeItem(productId);
+      removeItem(cartItemId);
       return;
     }
 
     const newItems = items.map((item) =>
-      item.productId === productId ? { ...item, quantity } : item
+      item.id === cartItemId ? { ...item, quantity } : item
     );
     
     setItems(newItems);
@@ -116,10 +136,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const total = items.reduce(
-    (sum, item) => sum + item.productPrice * item.quantity,
-    0
-  );
+  
+  const total = items.reduce((sum, item) => {
+    const addOnsTotal = (item.selectedAddOns || []).reduce(
+      (addOnSum, addOn) => addOnSum + addOn.price,
+      0
+    );
+    const itemPriceWithAddOns = item.productPrice + addOnsTotal;
+    return sum + itemPriceWithAddOns * item.quantity;
+  }, 0);
 
   return (
     <CartContext.Provider

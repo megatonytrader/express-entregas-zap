@@ -12,6 +12,7 @@ import { useSettings } from "@/hooks/useSettings";
 import bebidaIcon from "@/assets/bebida-icon.png";
 import espetinhoIcon from "@/assets/espetinho-icon.png";
 import fatiadoIcon from "@/assets/fatiado-icon.png";
+import { ProductDialog } from "@/components/ProductDialog";
 
 interface Product {
   id: string;
@@ -30,6 +31,8 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { settings } = useSettings();
   const { companyTitle, companySlogan, logoUrl } = settings;
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const categories = [
     { id: "Espetinho", name: "Espetinho", icon: "🍢" },
@@ -62,6 +65,11 @@ const Index = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDialogOpen(true);
   };
 
   const filteredProducts = selectedCategory
@@ -221,14 +229,7 @@ const Index = () => {
                     </span>
                     <Button
                       size="sm"
-                      onClick={() =>
-                        addItem({
-                          productId: product.id,
-                          productName: product.name,
-                          productPrice: product.price,
-                          productImage: product.image_url || "/placeholder.svg",
-                        })
-                      }
+                      onClick={() => handleAddClick(product)}
                     >
                       Adicionar
                     </Button>
@@ -251,6 +252,12 @@ const Index = () => {
 
       {/* Bottom Navigation */}
       <BottomNav />
+
+      <ProductDialog 
+        product={selectedProduct}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+      />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { ShoppingBag } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -25,6 +26,7 @@ const Checkout = () => {
     complement: "",
     neighborhood: "",
     payment: "money",
+    notes: "",
   });
 
   useEffect(() => {
@@ -94,7 +96,8 @@ const Checkout = () => {
         product_name: item.productName,
         product_image: item.productImage,
         product_price: item.productPrice,
-        quantity: item.quantity
+        quantity: item.quantity,
+        selected_add_ons: item.selectedAddOns || [],
       }));
 
       const { error: itemsError } = await supabase
@@ -106,8 +109,17 @@ const Checkout = () => {
       // Criar lista de itens do pedido
       const itemsList = items
         .map(
-          (item) =>
-            `• ${item.quantity}x ${item.productName} - R$ ${(item.productPrice * item.quantity).toFixed(2)}`
+          (item) => {
+            let itemText = `• ${item.quantity}x ${item.productName}`;
+            if (item.selectedAddOns && item.selectedAddOns.length > 0) {
+              const addOnsText = item.selectedAddOns.map(a => a.name).join(', ');
+              itemText += `\n  (Com: ${addOnsText})`;
+            }
+            const addOnsPrice = (item.selectedAddOns || []).reduce((sum, addOn) => sum + addOn.price, 0);
+            const totalItemPrice = (item.productPrice + addOnsPrice) * item.quantity;
+            itemText += ` - R$ ${totalItemPrice.toFixed(2)}`;
+            return itemText;
+          }
         )
         .join("\n");
 
@@ -129,6 +141,7 @@ ${itemsList}
 ${fullAddress}
 
 💳 *Forma de Pagamento:* ${formData.payment === 'money' ? 'Dinheiro' : 'Cartão na Entrega'}
+${formData.notes ? `\n📝 *Observações:*\n${formData.notes}` : ''}
 
 ✅ Aguardando confirmação!
       `.trim();
@@ -247,6 +260,19 @@ ${fullAddress}
                   placeholder="Nome do bairro"
                 />
               </div>
+            </div>
+          </Card>
+
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Observações</h2>
+            <div>
+              <Label htmlFor="notes">Observações do Pedido</Label>
+              <Textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                placeholder="Ex: Tirar a cebola, ponto da carne, etc."
+              />
             </div>
           </Card>
 
