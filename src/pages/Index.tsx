@@ -157,7 +157,7 @@ const Index = () => {
                   onClick={() => setSelectedCategory(category.id)}
                   className="whitespace-nowrap"
                 >
-                  {category.id !== 'Bebidas' && category.id !== 'Espetinho' && category.id !== 'Fatiado' && <span className="mr-1">{category.icon}</span>}
+                  {category.id !== 'Bebidas' && category.id !== 'Espetinho' && category.id !== 'Fatiado' && category.id !== 'Porções' && <span className="mr-1">{category.icon}</span>}
                   {category.name}
                 </Button>
               ))}
