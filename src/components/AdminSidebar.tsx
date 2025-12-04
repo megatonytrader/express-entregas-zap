@@ -1,15 +1,9 @@
-import { Home, Package, Settings, LogOut, LayoutDashboard, Image, MessageCircle, FolderTree, ShoppingCart, Building, Star } from "lucide-react";
+import { Home, Package, LayoutDashboard, Image, MessageCircle, FolderTree, ShoppingCart, Building, Star } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
 
 export function AdminSidebar() {
   const location = useLocation();
-  const { logout } = useAdminAuth();
-  const navigate = useNavigate();
-  const { toast } = useToast();
 
   const menuItems = [
     {
@@ -52,21 +46,7 @@ export function AdminSidebar() {
       icon: Building,
       label: "Empresa",
     },
-    {
-      path: "/admin/account-settings",
-      icon: Settings,
-      label: "Conta",
-    },
   ];
-
-  const handleLogout = async () => {
-    await logout();
-    toast({
-      title: "Logout realizado",
-      description: "Você saiu do painel administrativo",
-    });
-    navigate("/admin/login");
-  };
 
   const isActive = (path: string) => {
     if (path === "/admin") {
@@ -114,15 +94,6 @@ export function AdminSidebar() {
             <Home className="h-5 w-5" />
             <span>Ver Loja</span>
           </Link>
-        </Button>
-        
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-5 w-5" />
-          <span>Sair</span>
         </Button>
       </div>
     </aside>
