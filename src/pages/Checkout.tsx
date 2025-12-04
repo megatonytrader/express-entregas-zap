@@ -11,6 +11,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/hooks/useSettings";
+import type { Json } from "@/integrations/supabase/types";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -97,7 +98,7 @@ const Checkout = () => {
         product_image: item.productImage,
         product_price: item.productPrice,
         quantity: item.quantity,
-        selected_add_ons: item.selectedAddOns || [],
+        selected_add_ons: JSON.parse(JSON.stringify(item.selectedAddOns || [])) as Json,
       }));
 
       const { error: itemsError } = await supabase
