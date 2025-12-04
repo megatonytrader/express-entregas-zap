@@ -2,42 +2,42 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock, ShoppingBag } from "lucide-react";
+import { Lock, ShoppingBag, Mail } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminLogin = () => {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAdminAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      const success = login(password);
-      
-      if (success) {
-        toast({
-          title: "Login realizado com sucesso",
-          description: "Bem-vindo ao painel administrativo",
-        });
-        navigate("/admin");
-      } else {
-        toast({
-          title: "Senha incorreta",
-          description: "Por favor, tente novamente",
-          variant: "destructive",
-        });
-      }
-      
-      setLoading(false);
-    }, 500);
+    const { success, error } = await login(email, password);
+    
+    if (success) {
+      toast({
+        title: "Login realizado com sucesso",
+        description: "Bem-vindo ao painel administrativo",
+      });
+      navigate("/admin");
+    } else {
+      console.error("Login error:", error);
+      toast({
+        title: "Falha no login",
+        description: "Verifique seu e-mail e senha e tente novamente.",
+        variant: "destructive",
+      });
+    }
+    
+    setLoading(false);
   };
 
   return (
@@ -49,11 +49,26 @@ const AdminLogin = () => {
           </div>
           <h1 className="text-2xl font-bold mb-2">Painel Administrativo</h1>
           <p className="text-muted-foreground text-center">
-            Digite a senha para acessar o painel
+            Acesse com suas credenciais de administrador
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">E-mail</Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="pl-10"
+                required
+              />
+            </div>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>
             <div className="relative">
@@ -74,12 +89,6 @@ const AdminLogin = () => {
             {loading ? "Entrando..." : "Entrar"}
           </Button>
         </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            Senha padrão: <code className="bg-muted px-2 py-1 rounded">admin123</code>
-          </p>
-        </div>
       </Card>
     </div>
   );

@@ -49,8 +49,8 @@ export function AdminSidebar() {
     },
   ];
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast({
       title: "Logout realizado",
       description: "Você saiu do painel administrativo",
