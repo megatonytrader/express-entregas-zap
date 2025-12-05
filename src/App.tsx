@@ -21,6 +21,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminFavicon from "./pages/AdminFavicon";
 import Auth from "./pages/Auth";
+import UpdatePassword from "./pages/UpdatePassword";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const AppRoutes = () => {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/categories" element={<AdminCategories />} />
