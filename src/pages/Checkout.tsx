@@ -73,10 +73,14 @@ const Checkout = () => {
       const deliveryFee = 5;
       const orderTotal = total + deliveryFee;
       const fullAddress = `${formData.address}, ${formData.number}${formData.complement ? ` - ${formData.complement}` : ''} - ${formData.neighborhood}`;
+      
+      // Gerar ID do pedido no lado do cliente para evitar a necessidade de permissão de SELECT após o INSERT
+      const orderId = crypto.randomUUID();
 
-      const { data: order, error: orderError } = await supabase
+      const { error: orderError } = await supabase
         .from("orders")
         .insert([{
+          id: orderId,
           user_id: user?.id || null,
           customer_name: formData.name,
           customer_phone: formData.phone,
@@ -84,14 +88,12 @@ const Checkout = () => {
           payment_method: formData.payment === 'money' ? 'Dinheiro' : 'Cartão na Entrega',
           total: orderTotal,
           status: 'pending'
-        }])
-        .select()
-        .single();
+        }]);
 
       if (orderError) throw orderError;
 
       const orderItems = items.map(item => ({
-        order_id: order.id,
+        order_id: orderId,
         product_id: item.productId,
         product_name: item.productName,
         product_image: item.productImage,
@@ -123,7 +125,7 @@ const Checkout = () => {
         .join("\n");
 
       const message = `
-🛍️ *Novo Pedido #${order.id.substring(0, 8)}*
+🛍️ *Novo Pedido #${orderId.substring(0, 8)}*
 
 👤 *Cliente:* ${formData.name}
 📱 *Telefone:* ${formData.phone}
