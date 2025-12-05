@@ -374,7 +374,7 @@ const AdminProducts = () => {
                       <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Combos">Combos</SelectItem>
-                        <SelectItem value="Hamburguer">Hamburguer</SelectItem>
+                        <SelectItem value="Hambúrguer">Hambúrguer</SelectItem>
                         <SelectItem value="Bebidas">Bebidas</SelectItem>
                         <SelectItem value="Acompanhamentos">Acompanhamentos</SelectItem>
                         <SelectItem value="Pizzas">Pizzas</SelectItem>

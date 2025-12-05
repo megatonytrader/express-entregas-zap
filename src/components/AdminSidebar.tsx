@@ -58,7 +58,7 @@ export function AdminSidebar() {
   return (
     <aside className="w-64 bg-background border-r border-border min-h-screen p-4 flex flex-col animate-slide-in-left">
       <div className="mb-8">
-        <h2 className="text-xl font-bold text-primary mb-1">Admin Panel</h2>
+        <h2 className="text-xl font-bold text-primary mb-1">Painel Admin</h2>
         <p className="text-sm text-muted-foreground">Gestão do sistema</p>
       </div>
 
