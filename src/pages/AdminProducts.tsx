@@ -196,6 +196,28 @@ const AdminProducts = () => {
     }
   };
 
+  const handleDeleteAddOn = async (addOnId: string) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta opção? Ela será removida de todos os produtos.")) {
+      return;
+    }
+
+    try {
+      // First, remove associations from products
+      await supabase.from("product_add_ons").delete().eq("add_on_id", addOnId);
+
+      // Then, delete the add-on itself
+      const { error } = await supabase.from("add_ons").delete().eq("id", addOnId);
+      if (error) throw error;
+
+      setAddOns(prev => prev.filter(a => a.id !== addOnId));
+      setSelectedAddOns(prev => prev.filter(id => id !== addOnId));
+      toast({ title: "Opção excluída com sucesso" });
+    } catch (error) {
+      console.error("Error deleting add-on:", error);
+      toast({ title: "Erro ao excluir opção", variant: "destructive" });
+    }
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setImageFile(file);
@@ -384,13 +406,25 @@ const AdminProducts = () => {
                     </CollapsibleContent>
                   </Collapsible>
                   {addOns.length > 0 && (
-                    <div className="grid grid-cols-2 gap-3 pt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                       {addOns.map((addOn) => (
-                        <div key={addOn.id} className="flex items-center space-x-2 p-3 border rounded-lg">
-                          <Checkbox id={`addon-${addOn.id}`} checked={selectedAddOns.includes(addOn.id)} onCheckedChange={() => toggleAddOn(addOn.id)} />
-                          <label htmlFor={`addon-${addOn.id}`} className="flex-1 text-sm cursor-pointer">
-                            <span className="font-medium">{addOn.name}</span><span className="text-muted-foreground ml-2">R$ {addOn.price.toFixed(2)}</span>
-                          </label>
+                        <div key={addOn.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center space-x-2 flex-1 min-w-0">
+                            <Checkbox id={`addon-${addOn.id}`} checked={selectedAddOns.includes(addOn.id)} onCheckedChange={() => toggleAddOn(addOn.id)} />
+                            <label htmlFor={`addon-${addOn.id}`} className="flex-1 text-sm cursor-pointer truncate">
+                              <span className="font-medium">{addOn.name}</span>
+                              <span className="text-muted-foreground ml-2">R$ {addOn.price.toFixed(2)}</span>
+                            </label>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 flex-shrink-0"
+                            onClick={() => handleDeleteAddOn(addOn.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
                         </div>
                       ))}
                     </div>
