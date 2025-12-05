@@ -76,7 +76,7 @@ const Checkout = () => {
 
       const { data: order, error: orderError } = await supabase
         .from("orders")
-        .insert({
+        .insert([{
           user_id: user?.id || null,
           customer_name: formData.name,
           customer_phone: formData.phone,
@@ -84,7 +84,7 @@ const Checkout = () => {
           payment_method: formData.payment === 'money' ? 'Dinheiro' : 'Cartão na Entrega',
           total: orderTotal,
           status: 'pending'
-        })
+        }])
         .select()
         .single();
 
