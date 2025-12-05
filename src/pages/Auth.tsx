@@ -83,9 +83,19 @@ const Auth = () => {
 
         if (error) {
           if (error.message.includes("Invalid login credentials")) {
-            toast({ title: "E-mail ou senha incorretos", variant: "destructive" });
+            toast({ 
+              title: "E-mail ou senha incorretos", 
+              description: "Verifique seus dados ou crie uma conta se for novo por aqui.",
+              variant: "destructive" 
+            });
+          } else if (error.message.includes("Email not confirmed")) {
+            toast({
+              title: "E-mail não confirmado",
+              description: "Por favor, verifique sua caixa de entrada e confirme seu e-mail.",
+              variant: "destructive"
+            });
           } else {
-            toast({ title: error.message, variant: "destructive" });
+            toast({ title: "Erro no login", description: error.message, variant: "destructive" });
           }
           return;
         }
