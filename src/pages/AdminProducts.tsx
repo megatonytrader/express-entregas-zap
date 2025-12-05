@@ -22,6 +22,7 @@ import { AdminSidebar } from "@/components/AdminSidebar";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface Product {
   id: string;
@@ -39,6 +40,7 @@ interface AddOn {
 }
 
 const AdminProducts = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [addOns, setAddOns] = useState<AddOn[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -69,8 +71,10 @@ const AdminProducts = () => {
     if (isAdmin) {
       loadProducts();
       loadAddOns();
+    } else if (isAdmin === false) {
+      navigate("/auth");
     }
-  }, [isAdmin]);
+  }, [isAdmin, navigate]);
 
   const checkAdminAccess = async () => {
     try {
@@ -292,17 +296,6 @@ const AdminProducts = () => {
     return (
       <div className="min-h-screen bg-muted/30 flex items-center justify-center">
         <p>Verificando acesso...</p>
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
-        <Card className="p-8 text-center">
-          <h2 className="text-xl font-bold mb-2">Acesso Negado</h2>
-          <p className="text-muted-foreground">Você não tem permissão para acessar esta página.</p>
-        </Card>
       </div>
     );
   }
