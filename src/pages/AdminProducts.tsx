@@ -43,6 +43,7 @@ const AdminProducts = () => {
   const [addOns, setAddOns] = useState<AddOn[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -61,9 +62,33 @@ const AdminProducts = () => {
   const [isNewAddOnCharged, setIsNewAddOnCharged] = useState(false);
 
   useEffect(() => {
-    loadProducts();
-    loadAddOns();
+    checkAdminAccess();
   }, []);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadProducts();
+      loadAddOns();
+    }
+  }, [isAdmin]);
+
+  const checkAdminAccess = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+      const { data: hasRole } = await supabase.rpc('has_role', { 
+        _user_id: user.id, 
+        _role: 'admin' 
+      });
+      setIsAdmin(!!hasRole);
+    } catch (error) {
+      console.error("Error checking admin access:", error);
+      setIsAdmin(false);
+    }
+  };
 
   const resetForm = () => {
     setFormData({ name: "", description: "", price: "", category: "" });
@@ -263,6 +288,25 @@ const AdminProducts = () => {
     setSelectedAddOns((prev) => (prev.includes(addOnId) ? prev.filter((id) => id !== addOnId) : [...prev, addOnId]));
   };
 
+  if (isAdmin === null) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <p>Verificando acesso...</p>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+        <Card className="p-8 text-center">
+          <h2 className="text-xl font-bold mb-2">Acesso Negado</h2>
+          <p className="text-muted-foreground">Você não tem permissão para acessar esta página.</p>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-muted/30 flex">
       <div className="hidden lg:block">
@@ -314,10 +358,11 @@ const AdminProducts = () => {
                     <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                       <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Espetinho">Espetinho</SelectItem>
-                        <SelectItem value="Porções">Porções</SelectItem>
+                        <SelectItem value="Combos">Combos</SelectItem>
+                        <SelectItem value="Hamburguer">Hamburguer</SelectItem>
                         <SelectItem value="Bebidas">Bebidas</SelectItem>
-                        <SelectItem value="Fatiado">Fatiado</SelectItem>
+                        <SelectItem value="Acompanhamentos">Acompanhamentos</SelectItem>
+                        <SelectItem value="Pizzas">Pizzas</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
